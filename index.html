@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs–– -->
+  <meta charset="utf-8">
+  <title>Your Project Title</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="css/customize.css">
+  <style>
+  #map_1,#map_2,#map_3 {
+    height: 500px;
+  }
+  </style>
+
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+</head>
+<body>
+
+  <div class="container one-bottom" style="margin-top: 50px">
+    <div class="ten columns">
+      <h2>Connective Environments, Fall 2021</h2>
+      <p>
+        ARCH4050/6306: Tuesdays 2pm-5:15pm
+        <br>
+        Dr. Dimitris Papanikolaou | dpapanik@uncc.edu | Urban Synergetics Lab | https://urbansynergeticslab.net
+      </p>
+    </div>
+    <div class="two columns">
+      <a href="https://urbansynergeticslab.net/"><img class="scale-with-grid" src="img/LabLogo_dark_cropped.png"></a>
+    </div>
+  </div>
+
+  <div class="container one-bottom" style="margin-top: 50px">
+    <div class="twelve columns">
+      <h3>DIARY ENTRY 11.9.2021</h3>
+      <p align="justify"> Move forward from last week, there were several problems that needed to be addressed, how do people get in? Is it an open or closed system? Is it tight or loose? A general comment to simplify. What are the practical applications of this project? We were alson given a fishnet to use as an exterior shell in place of the previous attempt using plastic. When we first started to experiment with the fish net our initial idea as to tie together the pieces to form a volume that the interior inflatables would fit into and give shape. This was quite difficult because its very difficult to tie short strings together. But with a pyromaniac heart, Sage pulled a lighter from their bag to see if the net would melt, discovering that the net was made of a plastic based material. This allowed for the pieces to be melted together to create the fishnet volume. These bonds were relatively strong, though a few bonds broke when testing if the second inflatable would be deflated with the positive pressure of the first inflatable. A continuing issue from last time was that it wasn't deflating as fast as the first inflatable was inflating, so this could be solved with a larger hole, so this could be solved by using a larger air vent with a axial fan. We plan to make a human scaled inflatable next week to test this idea as well as exits for users. Based on the reference text, INFLATACOOKBOOK, we believe that using a hula hoop at the floor will create a seal, but there is still a question of how this will work with the change of volume  </p>
+    </div>
+  </div>
+
+  <div class="container one-bottom">
+    <div class="row">
+      <img class="three columns scale-with-grid quarter-bottom-rel"src="img/20211108_215808.JPG">
+      <img class="three columns scale-with-grid quarter-bottom-rel"src="img/20211108_215836.JPG">
+      <img class="three columns scale-with-grid quarter-bottom-rel" src="img/20211108_215841.JPG">
+      <img class="three columns scale-with-grid quarter-bottom-rel" src="img/20211108_215847.JPG">
+    </div>
+    <div class="row">
+      <img class="three columns scale-with-grid quarter-bottom-rel"src="img/20211108_215650.JPG">
+      <img class="three columns scale-with-grid quarter-bottom-rel"src="img/20211108_215718.JPG">
+      <img class="three columns scale-with-grid quarter-bottom-rel" src="img/20211108_215802.JPG">
+      <img class="three columns scale-with-grid quarter-bottom-rel" src="img/20211108_215858.JPG">
+    </div>
+  </div>
+
+
+
+  <script>
+
+  L.mapbox.accessToken = 'pk.eyJ1IjoiZGltcCIsImEiOiJkRnlra3RjIn0.E9CTYzNUEx0yb3dcfV4SiA';
+
+  var map_1 = L.mapbox.map('map_1')
+  .setView([40, -74.50], 9)
+  .addLayer(L.mapbox.styleLayer('mapbox://styles/dimp/citf6n01300692hmlxnnrv6wd'));
+  map_1
+  .scrollWheelZoom.disable();
+
+
+  d3.json("https://api.citybik.es/v2/networks/ford-gobike", function(data) {
+    console.log(data);
+
+    var map_2 = L.mapbox.map('map_2')
+    .setView([data.network.location.latitude, data.network.location.longitude], 10)
+    .addLayer(L.mapbox.styleLayer('mapbox://styles/dimp/citf6n01300692hmlxnnrv6wd'));
+    map_2
+    .scrollWheelZoom.disable();
+
+    data.network.stations.forEach(function(station){
+      station.lat = +station.latitude;
+      station.lng = +station.longitude;
+      var path_options = {
+        radius :  2,
+        color : d3.rgb(88,206,227).brighter(),
+        stroke: true,
+        weight : 1,
+      };
+      L.circleMarker([station.latitude, station.longitude], path_options).addTo(map_2);
+    });
+
+    var map_3 = L.mapbox.map('map_3')
+    .setView([data.network.location.latitude, data.network.location.longitude], 11)
+    .addLayer(L.mapbox.styleLayer('mapbox://styles/dimp/ck9mf0x8q3o521iojo2qmmp52'));
+    map_3
+    .scrollWheelZoom.disable();
+
+    data.network.stations.forEach(function(station){
+      station.lat = +station.latitude;
+      station.lng = +station.longitude;
+      var inventory_level = station.free_bikes / (station.free_bikes+station.empty_slots);
+      var path_options = {
+        radius :  0.14 * (station.free_bikes + station.empty_slots),
+        color : d3.rgb(88,206,227).brighter(),
+        fillColor : (function(){
+          return inventory_level > 0.5? d3.rgb(88,206,227) : d3.rgb(88,206,227).darker(2)
+        })(),
+        stroke: true,
+        weight : 1,
+        opacity : 1,
+        fillOpacity : 0.8
+      };
+      L.circleMarker([station.latitude, station.longitude], path_options).addTo(map_3);
+    });
+  });
+
+
+
+
+  </script>
+
+
+</body>
+</html>
